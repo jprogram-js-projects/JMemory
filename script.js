@@ -8,22 +8,64 @@ let timerInterval;
 let seconds = 0;
 let minutes = 0;
 let matchedPairs = 0;
-let dirImage = "images";
+let dirImages = "images"
+let curiosities = [];
 const totalPairs = 4;
 
 
-const cardsData = [
-  { name: 'img1', img: `${dirImage}/donald.png`,  curiosity: 'Curiosidade sobre a imagem 1' },
-  { name: 'img2', img: `${dirImage}/goofy.png`,   curiosity: 'Curiosidade sobre a imagem 2' },
-  { name: 'img3', img: `${dirImage}/mickey.png`,  curiosity: 'Curiosidade sobre a imagem 3' },
-  { name: 'img4', img: `${dirImage}/minnie.png`,  curiosity: 'Curiosidade sobre a imagem 4' }
+const defaultCuriosities = [
+  {"name": "img1", "curiosity": "Curiosidade sobre a imagem 1"},
+  {"name": "img2", "curiosity": "Curiosidade sobre a imagem 2"},
+  {"name": "img3", "curiosity": "Curiosidade sobre a imagem 3"},
+  {"name": "img4", "curiosity": "Curiosidade sobre a imagem 4"},
+  {"name": "img5", "curiosity": "Curiosidade sobre a imagem 5"},
+  {"name": "img6", "curiosity": "Curiosidade sobre a imagem 6"}
 ];
 
-function createCard({ name, img, curiosity }) {
+
+async function fetchCuriosities() {
+  try {
+    const storedCuriosities = localStorage.getItem('curiosities');
+    
+    if (storedCuriosities) {
+      curiosities = JSON.parse(storedCuriosities);
+    } else {
+      const response = await fetch('curiosities.json');
+      if (response.ok) {
+        const data = await response.json();
+        curiosities = data;
+        localStorage.setItem('curiosities', JSON.stringify(curiosities));
+      } else {
+        throw new Error('HTTP request failed');
+      }
+    }
+
+  } catch (error) {
+    console.error('Erro ao carregar as curiosidades:', error);
+    curiosities = defaultCuriosities;
+    localStorage.setItem('curiosities', JSON.stringify(curiosities));
+  }
+}
+
+function getRandomCuriosity() {
+  if (curiosities.length > 0) {
+    const randomIndex = Math.floor(Math.random() * curiosities.length);
+    return curiosities[randomIndex].curiosity;
+  }
+  return "Curiosidade não disponível.";
+}
+
+const cardsData = [
+  { name: 'img1', img: `${dirImages}/donald.png`  },
+  { name: 'img2', img: `${dirImages}/goofy.png`   },
+  { name: 'img3', img: `${dirImages}/mickey.png`  },
+  { name: 'img4', img: `${dirImages}/minnie.png`  }
+];
+
+function createCard({ name, img }) {
   const card = document.createElement('div');
   card.classList.add('card');
   card.dataset.name = name;
-  card.dataset.curiosity = curiosity;
 
   card.innerHTML = `
     <div class="front-face"></div>
@@ -44,6 +86,13 @@ function initializeGame() {
     const card = createCard(cardData);
     gameContainer.appendChild(card);
   });
+
+  curiosityElement.textContent = `Curiosidade: ${getRandomCuriosity()}`;
+
+  const bestTime = localStorage.getItem('bestTime');
+  if (bestTime) {
+    document.getElementById('best-time').textContent = `Melhor Tempo: ${bestTime}`;
+  }
 }
 
 function flipCard() {
@@ -51,7 +100,7 @@ function flipCard() {
   if (this === firstCard) return;
 
   this.classList.add('flip');
-  curiosityElement.textContent = `Curiosidade: ${this.dataset.curiosity}`;
+  curiosityElement.textContent = `Curiosidade: ${getRandomCuriosity()}`;
 
   if (!hasFlippedCard) {
     hasFlippedCard = true;
@@ -76,6 +125,7 @@ function disableCards() {
 
   if (matchedPairs === totalPairs) {
     stopTimer();
+    saveBestTime();
     showConfetti();
   }
   resetBoard();
@@ -112,6 +162,15 @@ function stopTimer() {
   clearInterval(timerInterval);
 }
 
+function saveBestTime() {
+  const currentTime = `${minutes < 10 ? '0' + minutes : minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+  const bestTime = localStorage.getItem('bestTime');
+  if (!bestTime || currentTime < bestTime) {
+    localStorage.setItem('bestTime', currentTime);
+    document.getElementById('best-time').textContent = `Melhor Tempo: ${currentTime}`;
+  }
+}
+
 function showConfetti() {
   const colors = ['#ff0', '#f00', '#0f0', '#00f', '#ff7f00', '#9400d3'];
   for (let i = 0; i < 100; i++) {
@@ -129,4 +188,6 @@ function showConfetti() {
   }
 }
 
-initializeGame();
+document.addEventListener('DOMContentLoaded', () => {
+  fetchCuriosities().then(initializeGame);
+});

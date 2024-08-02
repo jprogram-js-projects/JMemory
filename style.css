@@ -17,8 +17,15 @@ body {
     margin: 20px 0;
 }
 
-#timer {
+#timer-container {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+}
+
+#timer, #best-time {
     font-size: 1.2em;
+    margin: 2px 0;
 }
 
 #curiosity {
