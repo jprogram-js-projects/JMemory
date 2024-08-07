@@ -8,10 +8,9 @@ let timerInterval;
 let seconds = 0;
 let minutes = 0;
 let matchedPairs = 0;
-let dirImages = "images"
+let dirImages = "images";
 let curiosities = [];
 const totalPairs = 4;
-
 
 const defaultCuriosities = [
   {"name": "img1", "curiosity": "Curiosidade sobre a imagem 1"},
@@ -21,7 +20,6 @@ const defaultCuriosities = [
   {"name": "img5", "curiosity": "Curiosidade sobre a imagem 5"},
   {"name": "img6", "curiosity": "Curiosidade sobre a imagem 6"}
 ];
-
 
 async function fetchCuriosities() {
   try {
@@ -93,6 +91,38 @@ function initializeGame() {
   if (bestTime) {
     document.getElementById('best-time').textContent = `Melhor Tempo: ${bestTime}`;
   }
+
+  // Iniciar a animação de embaralhamento
+  shuffleAnimation().then(() => {
+    // Finalizar a animação e permitir o início do jogo
+    document.querySelectorAll('.card').forEach(card => card.style.animation = 'none');
+  });
+}
+
+function shuffleAnimation() {
+  return new Promise(resolve => {
+    const cards = document.querySelectorAll('.card');
+    
+    // Animação de juntar no centro
+    cards.forEach(card => {
+      const rect = card.getBoundingClientRect();
+      const centerX = window.innerWidth / 2 - rect.left - rect.width / 2;
+      const centerY = window.innerHeight / 2 - rect.top - rect.height / 2;
+      card.style.transform = `translate(${centerX}px, ${centerY}px)`;
+      card.classList.add('merge');
+    });
+
+    setTimeout(() => {
+      // Animação de distribuir para suas posições finais
+      cards.forEach(card => {
+        card.classList.remove('merge');
+        card.style.transform = '';
+        card.classList.add('distribute');
+      });
+
+      setTimeout(resolve, 500); // Tempo da segunda animação
+    }, 500); // Tempo da primeira animação
+  });
 }
 
 function flipCard() {
@@ -133,13 +163,11 @@ function disableCards() {
 
 function unflipCards() {
   lockBoard = true;
-
   setTimeout(() => {
     firstCard.classList.remove('flip');
     secondCard.classList.remove('flip');
-
     resetBoard();
-  }, 1200);
+  }, 1500);
 }
 
 function resetBoard() {
@@ -154,7 +182,7 @@ function startTimer() {
       seconds = 0;
       minutes++;
     }
-    timerElement.textContent = `Tempo: ${minutes < 10 ? '0' + minutes : minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+    timerElement.textContent = `Tempo: ${minutes}m ${seconds}s`;
   }, 1000);
 }
 
@@ -163,7 +191,7 @@ function stopTimer() {
 }
 
 function saveBestTime() {
-  const currentTime = `${minutes < 10 ? '0' + minutes : minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+  const currentTime = `${minutes}m ${seconds}s`;
   const bestTime = localStorage.getItem('bestTime');
   if (!bestTime || currentTime < bestTime) {
     localStorage.setItem('bestTime', currentTime);
@@ -172,14 +200,11 @@ function saveBestTime() {
 }
 
 function showConfetti() {
-  const colors = ['#ff0', '#f00', '#0f0', '#00f', '#ff7f00', '#9400d3'];
   for (let i = 0; i < 100; i++) {
     const confetti = document.createElement('div');
     confetti.classList.add('confetti');
-    confetti.style.left = `${Math.random() * 100}vw`;
-    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-    confetti.style.animationDelay = `${Math.random() * 2}s`;
-
+    confetti.style.left = `${Math.random() * 100}%`;
+    confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
     document.body.appendChild(confetti);
 
     setTimeout(() => {
@@ -190,4 +215,4 @@ function showConfetti() {
 
 document.addEventListener('DOMContentLoaded', () => {
   fetchCuriosities().then(initializeGame);
-});
+})
