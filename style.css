@@ -21,15 +21,34 @@ body {
     display: flex;
     justify-content: space-around;
     width: 100%;
+    padding: 10px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 #timer, #best-time {
-    font-size: 1.2em;
+    font-size: 1.5em;
     margin: 2px 0;
 }
 
 .controls {
     margin-bottom: 20px;
+}
+
+#restart-button {
+    padding: 10px 20px;
+    font-size: 1.2em;
+    background-color: #4CAF50;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#restart-button:hover {
+    background-color: #45a049;
 }
 
 #curiosity {
@@ -59,6 +78,14 @@ body {
 
 .card.flip {
     transform: rotateY(180deg);
+}
+
+.card.correct {
+    border: 2px solid #4CAF50;
+}
+
+.card.incorrect {
+    border: 2px solid #F44336;
 }
 
 .front-face,

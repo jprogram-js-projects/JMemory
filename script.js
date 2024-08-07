@@ -145,7 +145,19 @@ function flipCard() {
 
 function checkForMatch() {
   const isMatch = firstCard.dataset.name === secondCard.dataset.name;
-  isMatch ? disableCards() : unflipCards();
+  if (isMatch) {
+    disableCards();
+    firstCard.classList.add('correct');
+    secondCard.classList.add('correct');
+  } else {
+    firstCard.classList.add('incorrect');
+    secondCard.classList.add('incorrect');
+    setTimeout(() => {
+      firstCard.classList.remove('incorrect');
+      secondCard.classList.remove('incorrect');
+      unflipCards();
+    }, 500);
+  }
 }
 
 function disableCards() {
@@ -167,7 +179,7 @@ function unflipCards() {
     firstCard.classList.remove('flip');
     secondCard.classList.remove('flip');
     resetBoard();
-  }, 1500);
+  }, 1200);
 }
 
 function resetBoard() {
