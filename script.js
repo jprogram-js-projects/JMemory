@@ -213,6 +213,16 @@ function showConfetti() {
   }
 }
 
+document.getElementById('restart-button').addEventListener('click', () => {
+  clearInterval(timerInterval);
+  seconds = 0;
+  minutes = 0;
+  matchedPairs = 0;
+  timerElement.textContent = 'Tempo: 00:00';
+  gameContainer.innerHTML = '';
+  initializeGame();
+});
+
 document.addEventListener('DOMContentLoaded', () => {
   fetchCuriosities().then(initializeGame);
 })

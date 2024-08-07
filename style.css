@@ -28,6 +28,10 @@ body {
     margin: 2px 0;
 }
 
+.controls {
+    margin-bottom: 20px;
+}
+
 #curiosity {
     font-size: 1.2em;
     margin-bottom: 20px;
@@ -173,4 +177,53 @@ body {
     height: 100%;
     background: inherit;
     transform: skewY(30deg);
+}
+
+/* Responsividade */
+@media (max-width: 1200px) {
+    .game-container {
+        grid-template-columns: repeat(4, 120px);
+        gap: 15px;
+    }
+
+    .card {
+        width: 120px;
+        height: 160px;
+    }
+}
+
+@media (max-width: 900px) {
+    .game-container {
+        grid-template-columns: repeat(3, 100px);
+        gap: 10px;
+    }
+
+    .card {
+        width: 100px;
+        height: 140px;
+    }
+}
+
+@media (max-width: 600px) {
+    .game-container {
+        grid-template-columns: repeat(2, 80px);
+        gap: 10px;
+    }
+
+    .card {
+        width: 80px;
+        height: 120px;
+    }
+}
+
+@media (max-width: 400px) {
+    .game-container {
+        grid-template-columns: repeat(2, 70px);
+        gap: 5px;
+    }
+
+    .card {
+        width: 70px;
+        height: 100px;
+    }
 }
